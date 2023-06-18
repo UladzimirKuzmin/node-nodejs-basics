@@ -1,5 +1,5 @@
 import path from 'path';
-import { createRequire } from 'node:module';
+import { createRequire } from 'module';
 import { release, version } from 'os';
 import { createServer as createServerHttp } from 'http';
 import './files/c.js';
