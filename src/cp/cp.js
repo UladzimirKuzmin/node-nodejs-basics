@@ -1,6 +1,22 @@
+import { spawn } from 'child_process';
+
 const spawnChildProcess = async (args) => {
-    // Write your code here
+  const child = spawn('node', ['./files/script.js', ...args]);
+
+  process.stdin.pipe(child.stdin);
+  child.stdout.pipe(process.stdout);
+
+  const onClose = (code) => {
+    console.log(`Child process exited with code ${code}`);
+  };
+
+  const waitForChildExit = () =>
+    new Promise((resolve) => {
+      child.on('close', onClose);
+      child.on('exit', resolve);
+    });
+
+  await waitForChildExit();
 };
 
-// Put your arguments in function call to test this functionality
-spawnChildProcess( /* [someArgument1, someArgument2, ...] */);
+spawnChildProcess(['arg1', 'arg2']);
