@@ -6,10 +6,7 @@ const performCalculations = async () => {
   const threads = cpuCores.map(
     (_, i) =>
       new Promise((resolve, reject) => {
-        const worker = new Worker('./worker.js', {
-          workerData: i + 10,
-        });
-
+        const worker = new Worker('./worker.js', { workerData: i + 10 });
         worker.on('message', resolve);
         worker.on('error', () => reject({ status: 'error', data: null }));
       })
