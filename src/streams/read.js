@@ -11,7 +11,7 @@ const read = async () => {
     const stream = createReadStream(filePath, { encoding: 'utf8' });
 
     for await (const chunk of stream) {
-      process.stdout.write(chunk);
+      process.stdout.write(`${chunk}\n`);
     }
   } catch (err) {
     console.error('FS operation failed: Unable to read the file:', err.message);
