@@ -1,20 +1,26 @@
 import { promises as fsPromises } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+import { pathExists } from '../pathExists.js';
 
 const remove = async () => {
-  const fileToRemove = './files/fileToRemove.txt';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const fileToRemove = path.join(__dirname, 'files', 'fileToRemove.txt');
 
   try {
-    await fsPromises.access(fileToRemove);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      throw new Error('FS operation failed: File does not exist');
+    if (await pathExists(fileToRemove)) {
+      await fsPromises.unlink(fileToRemove);
+      console.log('File deleted successfully!');
     } else {
-      throw error;
+      throw new Error(
+        'FS operation failed: File to remove does not exist or inaccessible'
+      );
     }
+  } catch (error) {
+    throw error;
   }
-
-  await fsPromises.unlink(fileToRemove);
-  console.log('File deleted successfully!');
 };
 
 await remove();

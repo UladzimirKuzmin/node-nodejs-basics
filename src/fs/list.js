@@ -1,20 +1,24 @@
 import { promises as fsPromises } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+import { pathExists } from '../pathExists.js';
 
 const list = async () => {
-  const folderPath = './files';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const folderPath = path.join(__dirname, 'files');
 
   try {
-    await fsPromises.access(folderPath);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      throw new Error('FS operation failed: Folder does not exist');
+    if (await pathExists(folderPath)) {
+      const filenames = await fsPromises.readdir(folderPath);
+      console.log(filenames);
     } else {
-      throw error;
+      throw new Error('FS operation failed: Folder does not exist');
     }
+  } catch (error) {
+    throw error;
   }
-
-  const filenames = await fsPromises.readdir(folderPath);
-  console.log(filenames);
 };
 
 await list();

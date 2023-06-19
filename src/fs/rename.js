@@ -1,20 +1,30 @@
 import { promises as fsPromises } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+import { pathExists } from '../pathExists.js';
 
 const rename = async () => {
-  const sourceFile = './files/wrongFilename.txt';
-  const destinationFile = './files/properFilename.md';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const sourceFile = path.join(__dirname, 'files', 'wrongFilename.txt');
+  const destinationFile = path.join(__dirname, 'files', 'properFilename.md');
 
   try {
-    await fsPromises.access(sourceFile);
-    await fsPromises.access(destinationFile);
-    throw new Error('FS operation failed: Destination file already exists');
-  } catch (error) {
-    if (error.code === 'ENOENT') {
+    if (await pathExists(destinationFile)) {
+      throw new Error('FS operation failed: Destination file already exists');
+    }
+
+    if (await pathExists(sourceFile)) {
       await fsPromises.rename(sourceFile, destinationFile);
       console.log('File renamed successfully!');
     } else {
-      throw error;
+      throw new Error(
+        'FS operation failed: Source file does not exist or inaccessible'
+      );
     }
+  } catch (error) {
+    throw error;
   }
 };
 
