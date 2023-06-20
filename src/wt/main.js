@@ -18,7 +18,7 @@ const performCalculations = async () => {
       })
   );
 
-  const result = await Promise.all(threads);
+  const result = await Promise.allSettled(threads);
 
   console.log(result);
 };
